@@ -34,6 +34,10 @@ async def create_feature(data: dict):
     )
     return result
 
+@app.get("/dummy")
+def dummy_endpoint():
+    return {"message": "This is a dummy endpoint for testing."}
+
 @app.post("/create-github-pr")
 async def create_github_pr(data: dict):
     required_fields = [
@@ -41,6 +45,7 @@ async def create_github_pr(data: dict):
     ]
     for field in required_fields:
         if field not in data:
+    
             raise HTTPException(status_code=400, detail=f"Missing field: {field}")
 
     result = create_pull_request(
