@@ -12,6 +12,12 @@ load_dotenv()  # Loads the .env file
 
 app = FastAPI()
 
+def add_remote_if_missing(name, url):
+    """Add a git remote only if it doesn't already exist."""
+    remotes = subprocess.run(["git", "remote"], capture_output=True, text=True)
+    if name not in remotes.stdout.split():
+        subprocess.run(["git", "remote", "add", name, url], check=True)
+
 @app.get("/")
 def read_root():
     return {"message": "API is running"}
@@ -74,10 +80,9 @@ async def merge_github_to_gitlab(
 ):
     # Step 1: Fetch GitHub branch and push to GitLab
     try:
-        # Add GitHub remote if not exists
-        subprocess.run(["git", "remote", "add", "github", f"https://github.com/{github_repo}.git"], check=False)
-        # Add GitLab remote if not exists
-        subprocess.run(["git", "remote", "add", "gitlab", gitlab_repo_url], check=False)
+        # Add GitHub and GitLab remotes only if missing
+        add_remote_if_missing("github", f"https://github.com/{github_repo}.git")
+        add_remote_if_missing("gitlab", gitlab_repo_url)
         # Fetch the branch from GitHub
         subprocess.run(["git", "fetch", "github", github_branch], check=True)
         # Push the branch to GitLab
