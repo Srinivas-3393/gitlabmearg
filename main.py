@@ -1,27 +1,25 @@
-...code from GitHub...
->>>>>>> branch-or-commit
 import logging
 from dotenv import load_dotenv
 import os
 import subprocess
 import gitlab
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
 from gitlab_api import create_feature_branch_and_mr
-from github_api import create_pull_request  # <-- Import the function
+from github_api import create_pull_request
 
 load_dotenv()  # Loads the .env file
-
-github_token = os.getenv("GITHUB_TOKEN")
-gitlab_token = os.getenv("GITLAB_TOKEN")
-from fastapi import FastAPI, HTTPException
-from gitlab_api import create_feature_branch_and_mr
-from github_api import create_pull_request  # <-- Import the function
 
 app = FastAPI()
 
 @app.get("/")
 def read_root():
     return {"message": "API is running"}
+
+@app.get("/favicon.ico")
+async def favicon():
+    # Serve favicon.ico if present in the project directory
+    return FileResponse("favicon.ico")
 
 @app.post("/create-feature")
 async def create_feature(data: dict):
@@ -53,7 +51,6 @@ async def create_github_pr(data: dict):
     ]
     for field in required_fields:
         if field not in data:
-    
             raise HTTPException(status_code=400, detail=f"Missing field: {field}")
 
     result = create_pull_request(
@@ -103,6 +100,3 @@ async def merge_github_to_gitlab(
     except Exception as e:
         logging.exception("GitLab MR creation failed")
         raise HTTPException(status_code=500, detail=f"GitLab MR creation failed: {str(e)}")
-=======
-# gitlabmerge
->>>>>>> 2babace4701e891742b8ba0233b55114d5d174ab
