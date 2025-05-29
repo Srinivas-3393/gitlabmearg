@@ -1,3 +1,5 @@
+...code from GitHub...
+>>>>>>> branch-or-commit
 import logging
 from dotenv import load_dotenv
 import os
@@ -101,3 +103,6 @@ async def merge_github_to_gitlab(
     except Exception as e:
         logging.exception("GitLab MR creation failed")
         raise HTTPException(status_code=500, detail=f"GitLab MR creation failed: {str(e)}")
+=======
+# gitlabmerge
+>>>>>>> 2babace4701e891742b8ba0233b55114d5d174ab
