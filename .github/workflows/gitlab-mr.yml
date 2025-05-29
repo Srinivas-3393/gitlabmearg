@@ -1,0 +1,22 @@
+name: Sync to GitLab and Create MR
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create-mr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call FastAPI to create MR
+        run: |
+          curl -X POST https://adapters-representatives-craft-lobby.trycloudflare.com/create-feature \
+            -H "Content-Type: application/json" \
+            -d '{
+              "project_id": 70129981,
+              "source_branch": "main",
+              "feature_branch": "feature/${{ github.sha }}",
+              "title": "Auto MR for ${{ github.sha }}",
+              "description": "Automated MR from GitHub Action"
+            }'
