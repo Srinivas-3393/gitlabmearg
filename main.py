@@ -12,7 +12,7 @@ load_dotenv()  # Loads the .env file
 
 app = FastAPI()
 
-def add_remote_if_missing(name, url):
+def add_remote_if_missing(name: str, url: str):
     """Add a git remote only if it doesn't already exist."""
     remotes = subprocess.run(["git", "remote"], capture_output=True, text=True)
     if name not in remotes.stdout.split():
@@ -78,17 +78,21 @@ async def merge_github_to_gitlab(
     mr_title: str = "Automated MR: GitHub branch to GitLab",
     mr_description: str = "This MR was created automatically by FastAPI."
 ):
+    """
+    Fetch a branch from GitHub, push it to GitLab, and create a merge request in GitLab.
+    """
     # Step 1: Fetch GitHub branch and push to GitLab
     try:
-        # Add GitHub and GitLab remotes only if missing
         add_remote_if_missing("github", f"https://github.com/{github_repo}.git")
         add_remote_if_missing("gitlab", gitlab_repo_url)
-        # Fetch the branch from GitHub
         subprocess.run(["git", "fetch", "github", github_branch], check=True)
-        # Push the branch to GitLab
         subprocess.run(["git", "push", "gitlab", f"refs/remotes/github/{github_branch}:{github_branch}"], check=True)
     except subprocess.CalledProcessError as e:
+        logging.exception("Git operation failed")
         raise HTTPException(status_code=500, detail=f"Git operation failed: {e}")
+    except Exception as e:
+        logging.exception("Unexpected error during git operations")
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
 
     # Step 2: Create Merge Request in GitLab
     try:
