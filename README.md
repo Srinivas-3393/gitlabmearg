@@ -1,4 +1,8 @@
-<<<<<<< HEAD
+ HEAD
+...your local content...
+
+...content from gitlab/main...
+ gitlab/main
 # GitLab AI Merge Request Assistant
 
 ## Overview
@@ -62,7 +66,7 @@ Go to [http://localhost:8000/docs](http://localhost:8000/docs) in your browser.
 
 ```json
 {
-  "project_id": 70153406,
+  "project_id": 70311786,
   "source_branch": "main",
   "feature_branch": "feature/ai-review-assistant",
   "title": "Add my new feature",
